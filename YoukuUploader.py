@@ -154,7 +154,11 @@ def main():
     t1= time.time()
     #---------------------------------------------------------------------------
     youku = YoukuVideoUploader(config)
-    bSuccess, detailInfo = youku.UploadVideo(r"SampleData/sample1.mp4", catId ='105')
+
+    sampleVideoPath = os.path.join( os.path.dirname(__file__),
+                                    r"SampleData\sample1.mp4")
+
+    bSuccess, detailInfo = youku.UploadVideo(sampleVideoPath, catId ='105')
     if bSuccess:
         print "Video Sucessfully uploaded, and the video_id is: %s" %detailInfo
         result = youku.getVideoUrl()
