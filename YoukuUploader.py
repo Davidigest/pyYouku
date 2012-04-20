@@ -18,14 +18,13 @@ import webbrowser, os, time
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 
-from config import *        # User account and err msg
+from config import *        # User account & err msg etc
 
 
 class YoukuVideoUploader(object) :
-    def __init__(self, config) :
-        self.config = config
-
-        # Private variables
+    def __init__(self) :
+                            
+        # Private variables, config is imported from config.py
         self.__youku_pid          = config ["youku_pid"]
         self.__youku_user_name    = config ["youku_user_name"]
         self.__youku_password     = config ["youku_password"]
@@ -133,7 +132,7 @@ class YoukuVideoUploader(object) :
 def main():
     t1= time.time()
     #---------------------------------------------------------------------------
-    youku = YoukuVideoUploader(config)
+    youku = YoukuVideoUploader()
 
     sampleVideoPath = os.path.join( os.path.dirname(__file__),
                                     r"SampleData\sample1.mp4")

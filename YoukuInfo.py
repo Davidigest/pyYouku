@@ -1,3 +1,4 @@
+# coding=utf-8
 #*******************************************************************************
 # PyYouku : A python library for manipulating Youku videos
 # Youku: http://Youku.com is China's equivalent of Youtube
@@ -12,84 +13,57 @@
 # v0.1,  Apr. 19 2012
 #
 
-##import urlparse
-##import urllib, urllib2, json
-##import webbrowser, os, time
-##from poster.encode import multipart_encode
-##from poster.streaminghttp import register_openers
-
 import httplib, json, urllib
-from config import *        # User account and err msg
+from config import *                # config.py : User account and err msg etc.
 
 
 class YoukuInfo (object) :
     def __init__(self) :
-
-        self.config = config
-
-        # Private variables
-        self.__youku_pid          = config ["youku_pid"]
-        self.__youku_user_name    = config ["youku_user_name"]
-        self.__youku_password     = config ["youku_password"]
-        self.__upLoadURL          = config ['upload_url']
-
+        self.config = config        # imported from config.py
 
     def getVideoCategories(self) :
-        url = r'api.youku.com'
-        conn = httplib.HTTPConnection(url)
-        #print "conn=", conn
+        
+        """
+        This function returns a list of categories in a dictionary,
+        { category id : category Name }, for instance
+        100 : 动漫 ;  102 : 广告 ;    104 : 汽车
+        """
 
-        path = r'/api_ptcategory/?'
         param = {}
-        param['pid']    =   config ["youku_pid"]    # Partner ID
+        param['pid']    =   config ["youku_pid"]    # Partner ID, important!!!
         param['catpid'] =   '0'                     # Parent category, default = 0?root
-        param['rt']     =   'JSON'                  # Return type
+        param['rt']     =   '3'                     # Return type: 2=xml, 3=json
 
-        path += urllib.urlencode(param)
-        #print path
+        # Approach I, this also works 
+        #url = r"http://api.youku.com/api_ptcategory?%s" % urllib.urlencode(param)
+        #result = urllib.urlopen(url)        
+        #result = json.loads(result.read())
+        #print result
+
+        # Approach II
+        conn = httplib.HTTPConnection('api.youku.com')
+        path = r'/api_ptcategory/?' + urllib.urlencode(param)
         conn.request('GET', path)
         response = conn.getresponse()
+        
+        output = {}
 
         if response.status == 200 :
             result = response.read()
-            unicodedJson = json.dumps(result)
+            result = json.loads(result)
 
-            #print result
-            #result2 = json.loads(unicodedJson)
-            print result
-
-
-
-
-
-##        url = "http://api.youku.com/api_ptcategory%s" % urllib.urlencode(param)
-##        print url
-##        f = urllib.urlopen(url)
-        #print f.read()
-
-##        result2 = json.loads(f.read())
-##        print result2
-
-
-##        import os
-##        os.system('pause')
-
-##        conn.request('GET', path + strParam)
-##        response = conn.getresponse()
-##
-##        print response.status
-##
-##        if response.status == 200 :
-##            result = response.read()
-##            print result
-##            #result2 = json.loads(result)
-##            #print result2
+            allCategories = result['item']            
+            for item in allCategories :
+                output[item['id']] = item['name'].encode('utf-8')
+        
+        return output
+        
 
 def main():
     info = YoukuInfo()
-    info.getVideoCategories()
-
-
+    output = info.getVideoCategories()
+    for id in output.iterkeys() :
+        print id, ':', output[id]    
 
 if __name__ == "__main__":
     main()
