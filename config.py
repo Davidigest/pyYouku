@@ -23,8 +23,16 @@ config = \
     'youku_pid'           :   '123456',                 # YOUKU partener ID
     'youku_user_name'     :   'YoukuUser@gmail.com',    # YOUKU user
     'youku_password'      :   'YoukuPassword',          # YOUKU user's password
+    'upload_url'          :     r'http://gupload.youku.com/upload/uploadPackage'
 }
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+config = \
+{
+    'youku_pid'           :   'XMjMzNg==',                 # YOUKU partener ID
+    'youku_user_name'     :   'davidigest@gmail.com',   # YOUKU user
+    'youku_password'      :   'xixihaha',               # YOUKU user's password
+    'upload_url'          :    r'http://gupload.youku.com/upload/uploadPackage'
+}
 
 
 errorMsg = \

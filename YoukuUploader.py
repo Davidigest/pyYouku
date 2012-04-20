@@ -29,7 +29,7 @@ class YoukuVideoUploader(object) :
         self.__youku_pid          = config ["youku_pid"]
         self.__youku_user_name    = config ["youku_user_name"]
         self.__youku_password     = config ["youku_password"]
-        self.__upLoadURL = r'http://gupload.youku.com/upload/uploadPackage'
+        self.__upLoadURL          = config ['upload_url']
 
     def UploadVideo(self,
                     videoPath,                      # video path in a file system
