@@ -32,11 +32,12 @@ class YoukuVideoUploader(object) :
         self.__upLoadURL = r'http://gupload.youku.com/upload/uploadPackage'
 
     def UploadVideo(self,
-                    videoPath,      # video path in a file system
-                    catId,          # Category ID
-                    title =         "Good morning, David",
-                    description =   "Upload video with Python, by David",
-                    tagInfo =       "Comma, delimited, tags"
+                    videoPath,                      # video path in a file system
+                    title       = "Video",
+                    description = "Automatically uploaded video",
+                    tagInfo     = "Tags",
+                    private     = True,              # boolean
+                    catId       = '105'              # Category ID : technology
                     ) :
         """
         Upload the videos Youku's cloud storage
@@ -58,18 +59,18 @@ class YoukuVideoUploader(object) :
 
         print "Begin uploading video =====>"
         param = { }
-        param['partnerid']  = config['youku_pid']
+        param['partnerid']  = self.__youku_pid
+        param['username']   = self.__youku_user_name   # the user who uploads the video
+        param['password']   = self.__youku_password	   # the user's password, if the length of this parameter is 32 bit, MD5 verification is used, otherwise, password text
+
         param['title']  = title	        # Video Title, maximum 50 Chinese chars, and 100 Enlish letters, do not use numbers only
         param['tags']   = tagInfo       # Video Tag, single tag : 2-6/4-12 Chinese/Eng chars, this must not be empty, max 10 tags
         param['catIds'] = catId         # Video category, only 1 categary should be assigned
         param['memo']   = description   # Video description
 
-        param['username'] = self.__youku_user_name     # the user who uploads the video
-        param['password'] = self.__youku_password	   # the user's password, if the length of this parameter is 32 bit, MD5 verification is used, otherwise, password text
-
         # Hard-coded paramers
-        param['sourceType'] = 1         # 0=Reproduced, 1=original
-        param['publicType'] = 0         # Visibility, 0= public
+        param['sourceType'] = 1             # 0=Reproduced, 1=original
+        param['publicType'] = int(private)  # Visibility, 0= public
 
         #param['folderIds'] 	    # Which folder(s) to upload, use comma to seperate multi-folders
 
@@ -82,6 +83,9 @@ class YoukuVideoUploader(object) :
         datagen, headers = multipart_encode(param)
         request = urllib2.Request(self.__upLoadURL, datagen, headers)
         video_id = urllib2.urlopen(request).read()  # This is a string
+
+        #print "video_id=", video_id
+        #os.system("pause")
 
         self.video_id = int(video_id)
 
@@ -101,30 +105,30 @@ class YoukuVideoUploader(object) :
         return bSuccess, extraInfo
 
     def getVideoUrl(self) :
-            """
-            Call this function after calling UploadVideo()
-            <I> None
-            <O> videoURL    : the uploaded video's url
-            <O> embedScript : this embedded script will be used in user's webpage
-                              e.g. the Div in a HTML or a PHP file
-            """
+        """
+        Call this function after calling UploadVideo()
+        <I> None
+        <O> videoURL    : the uploaded video's url
+        <O> embedScript : this embedded script will be used in user's webpage
+                          e.g. the Div in a HTML or a PHP file
+        """
 
-            qm = r'"'  # qutation mark
-            def wrap(someString) :
-                return qm + someString + qm
+        qm = r'"'  # qutation mark
+        def wrap(someString) :
+            return qm + someString + qm
 
-            urlFormatter = r"http://player.youku.com/player.php/sid/%s/partnerid/%s/v.swf"
-            videoURL = urlFormatter %(self.video_id, self.__youku_pid)
+        urlFormatter = r"http://player.youku.com/player.php/sid/%s/partnerid/%s/v.swf"
+        videoURL = urlFormatter %(self.video_id, self.__youku_pid)
 
-            embedScript = "<embed src=" + qm + videoURL + qm + \
-            " quality=" + wrap("high") + \
-            " width=" + wrap("480") + " height=" + wrap("420") + \
-            " align=" + wrap ("middle") + \
-            " allowScriptAccess=" + wrap("sameDomain") + \
-            " type=" + wrap("application/x-shockwave-flash") + \
-            r"></embed>"
+        embedScript = "<embed src=" + qm + videoURL + qm + \
+        " quality=" + wrap("high") + \
+        " width=" + wrap("480") + " height=" + wrap("420") + \
+        " align=" + wrap ("middle") + \
+        " allowScriptAccess=" + wrap("sameDomain") + \
+        " type=" + wrap("application/x-shockwave-flash") + \
+        r"></embed>"
 
-            return videoURL, embedScript
+        return videoURL, embedScript
 
 def main():
     t1= time.time()
@@ -134,7 +138,7 @@ def main():
     sampleVideoPath = os.path.join( os.path.dirname(__file__),
                                     r"SampleData\sample1.mp4")
 
-    bSuccess, detailInfo = youku.UploadVideo(sampleVideoPath, catId ='105')
+    bSuccess, detailInfo = youku.UploadVideo(sampleVideoPath, catId ='105', private = False )
     if bSuccess:
         print "Video Sucessfully uploaded, and the video_id is: %s" %detailInfo
         result = youku.getVideoUrl()

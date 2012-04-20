@@ -1,8 +1,15 @@
 pyYouku
 =======
 
-Python Script to batch upload Youku Videos. Youku http://Youku.com is China's equivalent of Youtube.
-This project focuses on batch uploading videos to Youku's cloud.
+Youku = Youtube in China (http://Youku.com).
+This project aims at batch uploading videos to Youku's cloud.
+
+Example :
+>    youku = YoukuVideoUploader(config)
+      bSuccess, detailInfo = youku.UploadVideo("sample.mp4", private = False )
+      if bSuccess :
+      	youku.getVideoUrl( )	
+
 
 Prerequisites:
 
