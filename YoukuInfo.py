@@ -49,10 +49,23 @@ class YoukuInfo (object) :
         output = {}
 
         if response.status == 200 :
-            result = response.read()
-            result = json.loads(result)
+            result = response.read()            
+            try:
+                result = json.loads(result)
+            except Exception, e:                
+                print "******************************************************"
+                print "No Valid result is returned"
+                print "Possibly the user/password or PartnerID is incorrect"
+                print "Please properly fill infomation in config.py"
+                print "******************************************************"
+                return None
+            else:
+                pass
+            finally:
+                pass
+            
 
-            allCategories = result['item']            
+            allCategories = result['item']                        
             for item in allCategories :
                 output[item['id']] = item['name'].encode('utf-8')
         
@@ -62,6 +75,9 @@ class YoukuInfo (object) :
 def main():
     info = YoukuInfo()
     output = info.getVideoCategories()
+    if output==None:
+        print "Failed to query category information"
+        return
     for id in output.iterkeys() :
         print id, ':', output[id]    
 
